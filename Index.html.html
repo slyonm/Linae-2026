@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LINAES San Gabriel 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-950:#0b1526;
+    --navy-900:#0f1e33;
+    --navy-800:#16283f;
+    --navy-700:#1d3350;
+    --navy-600:#2a4468;
+    --line:#2a3f5c;
+    --gold:#e8b34c;
+    --gold-dim:#a97f31;
+    --green:#4fbf82;
+    --red:#e2685f;
+    --text:#edeff3;
+    --muted:#8aa0bc;
+    --muted-2:#5f7a9c;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--navy-950);
+    color:var(--text);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:40px;
+  }
+  h1,h2,h3,.num,.tab-label,.court-tag{
+    font-family:'Oswald',sans-serif;
+  }
+  /* Header */
+  .topbar{
+    background:linear-gradient(180deg,var(--navy-900),var(--navy-950));
+    border-bottom:1px solid var(--line);
+    padding:22px 16px 16px;
+    position:sticky; top:0; z-index:20;
+  }
+  .brand-row{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;}
+  .brand-mark{
+    font-family:'Oswald',sans-serif; font-weight:700; font-size:22px;
+    letter-spacing:0.5px; color:var(--gold);
+  }
+  .brand-sub{color:var(--muted); font-size:13px;}
+  .brand-place{color:var(--muted-2,#5f7a9c); font-size:12.5px; margin-top:4px;}
+
+  /* Category tabs */
+  .tabs{
+    display:flex; gap:8px; margin-top:16px; overflow-x:auto; padding-bottom:2px;
+    scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{
+    flex:0 0 auto;
+    padding:9px 14px;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:var(--navy-800);
+    color:var(--muted);
+    font-family:'Oswald',sans-serif;
+    font-size:13.5px;
+    letter-spacing:0.3px;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:background .15s,color .15s,border-color .15s;
+  }
+  .tab.active{
+    background:var(--gold);
+    border-color:var(--gold);
+    color:var(--navy-950);
+    font-weight:600;
+  }
+
+  .wrap{max-width:720px; margin:0 auto; padding:0 14px;}
+  .cat-head{padding:18px 0 6px;}
+  .cat-title{font-size:20px; font-weight:600; margin:0;}
+  .cat-venue{color:var(--muted); font-size:13px; margin-top:3px;}
+
+  /* Section nav within category */
+  .subnav{display:flex; gap:6px; margin:14px 0 10px;}
+  .subbtn{
+    flex:1;
+    text-align:center;
+    padding:8px 6px;
+    border-radius:7px;
+    border:1px solid var(--line);
+    background:transparent;
+    color:var(--muted);
+    font-size:12.5px;
+    font-family:'Oswald',sans-serif;
+    letter-spacing:0.4px;
+    cursor:pointer;
+  }
+  .subbtn.active{background:var(--navy-700); color:var(--text); border-color:var(--navy-600);}
+
+  /* Standings */
+  .group-block{margin-bottom:18px;}
+  .group-title{
+    font-size:13px; color:var(--gold); font-weight:600; margin:0 0 6px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .group-title .line{flex:1; height:1px; background:var(--line);}
+  table.standings{
+    width:100%; border-collapse:collapse; font-size:12.5px;
+    background:var(--navy-800); border-radius:8px; overflow:hidden;
+  }
+  table.standings th{
+    background:var(--navy-700); color:var(--muted); font-weight:500;
+    padding:7px 4px; text-align:center; font-size:10.5px; letter-spacing:0.2px;
+  }
+  table.standings th:first-child, table.standings td:first-child{
+    text-align:left; padding-left:9px;
+  }
+  table.standings td{padding:7px 4px; text-align:center; border-top:1px solid var(--navy-700);}
+  table.standings td.team{font-size:12px; max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  table.standings td.pts{color:var(--gold); font-weight:700; font-family:'Oswald',sans-serif;}
+  table.standings tr.qualify td.team{color:var(--green);}
+
+  .copa-tables{display:flex; flex-direction:column; gap:16px; margin-top:6px;}
+  .copa-label{
+    display:inline-block; font-size:11px; font-family:'Oswald',sans-serif;
+    letter-spacing:0.5px; padding:3px 9px; border-radius:20px; margin-bottom:7px;
+  }
+  .copa-ORO{background:rgba(232,179,76,0.16); color:var(--gold);}
+  .copa-PLATA{background:rgba(180,190,205,0.16); color:#c7d1de;}
+  .copa-BRONCE{background:rgba(198,120,80,0.18); color:#d99567;}
+
+  /* Schedule */
+  .day-block{margin-bottom:16px;}
+  .day-title{
+    font-family:'Oswald',sans-serif; font-size:13px; letter-spacing:0.5px;
+    color:var(--text); background:var(--navy-800); padding:7px 10px;
+    border-radius:7px; margin-bottom:8px; border-left:3px solid var(--gold);
+  }
+  .match-card{
+    background:var(--navy-800);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:10px 11px;
+    margin-bottom:8px;
+  }
+  .match-meta{
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:11px; color:var(--muted); margin-bottom:8px;
+  }
+  .match-meta .time{font-family:'Oswald',sans-serif; color:var(--text); font-size:13px;}
+  .court-tag{
+    background:var(--navy-700); color:var(--muted); font-size:10.5px;
+    padding:2px 8px; border-radius:5px; letter-spacing:0.3px;
+  }
+  .copa-chip{font-size:10px; padding:2px 7px; border-radius:5px; letter-spacing:0.4px;}
+  .teams-row{display:flex; align-items:center; gap:8px;}
+  .team-col{flex:1; min-width:0;}
+  .team-name{
+    font-size:13.5px; line-height:1.25;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .team-name.placeholder{color:var(--muted); font-style:italic; font-size:12.5px;}
+  .team-name.winner{color:var(--green); font-weight:600;}
+  .score-col{display:flex; align-items:center; gap:5px;}
+  .score-input{
+    width:34px; height:34px;
+    background:var(--navy-950);
+    border:1px solid var(--line);
+    border-radius:7px;
+    color:var(--text);
+    text-align:center;
+    font-family:'Oswald',sans-serif;
+    font-size:15px;
+    -moz-appearance:textfield;
+  }
+  .score-input:focus{outline:none; border-color:var(--gold);}
+  .score-input::-webkit-outer-spin-button, .score-input::-webkit-inner-spin-button{
+    -webkit-appearance:none; margin:0;
+  }
+  .vs-label{color:var(--muted-2,#5f7a9c); font-size:11px; padding:0 2px;}
+  .manual-input{
+    width:100%; background:transparent; border:none; border-bottom:1px dashed var(--muted-2,#5f7a9c);
+    color:var(--muted); font-size:12.5px; font-style:italic; padding:2px 0;
+  }
+  .manual-input:focus{outline:none; border-bottom-color:var(--gold); color:var(--text);}
+  .pending-tag{font-size:9.5px; color:var(--muted-2,#5f7a9c); margin-top:5px;}
+
+  .info-note{
+    font-size:12px; color:var(--muted); background:var(--navy-800);
+    border:1px solid var(--line); border-radius:8px; padding:10px 12px; margin:12px 0 18px;
+    line-height:1.5;
+  }
+  .info-note b{color:var(--gold); font-weight:600;}
+  .sync-note{
+    font-size:11px; color:var(--muted-2,#5f7a9c); text-align:center; margin-top:6px;
+  }
+  .save-flash{color:var(--green);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <div class="brand-row">
+      <span class="brand-mark">LINAES 2026</span>
+      <span class="brand-sub">Colegio / Saint Gabriel's School</span>
+    </div>
+    <div class="brand-place">Viernes 4 — Domingo 6 de septiembre · resultados y llaves en vivo</div>
+    <div class="tabs" id="tabs"></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="cat-head">
+    <p class="cat-title" id="catTitle"></p>
+    <p class="cat-venue" id="catVenue"></p>
+  </div>
+  <div class="subnav">
+    <button class="subbtn active" data-sub="tabla">Tabla</button>
+    <button class="subbtn" data-sub="fixture">Partidos</button>
+    <button class="subbtn" data-sub="llaves">Llaves</button>
+  </div>
+  <div id="content"></div>
+  <p class="sync-note" id="syncNote">Los resultados se guardan y se sincronizan para todos.</p>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, setDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// ============================================================
+// PEGA AQUÍ TU CONFIGURACIÓN DE FIREBASE (Configuración del
+// proyecto → Tus apps → ícono </> → Registrar app).
+// Reemplaza estos valores de ejemplo por los tuyos.
+// ============================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyAoVx6o82dhZf3-1DrTveQMV-TKRKF6wNg",
+  authDomain: "linaes-2026.firebaseapp.com",
+  projectId: "linaes-2026",
+  storageBucket: "linaes-2026.firebasestorage.app",
+  messagingSenderId: "886506130595",
+  appId: "1:886506130595:web:f51ab3ced1a78668cd0316"
+};
+const CONFIG_PENDING = firebaseConfig.apiKey === "TU_API_KEY";
+
+let db = null;
+if(!CONFIG_PENDING){
+  const app = initializeApp(firebaseConfig);
+  db = getFirestore(app);
+}
+const SCORES_COLLECTION = 'linaes2026_scores';
+
+// ---------- DATA ----------
+const T = (g,p)=>({g,p});          // posición dentro de un grupo
+const GEN = (pos)=>({gen:pos});    // posición en clasificación general (Mini B)
+const MINI = (pos)=>({mini:pos});  // posición en tabla única (Mini)
+const COPA = (copa,pos)=>({copaRank:copa,pos}); // posición en mini-tabla de copa (Infantil/Superior)
+const AGG = (pair,side)=>({agg:pair,side});     // ganador/perdedor de llave a doble partido (Mini B)
+
+const CATEGORIES = [
+
+// ------------------------------------------------------------------ MINI B
+{
+  id:'minib', tabLabel:'Mini B · Sub13B', title:"Mini B — Sub 13B",
+  venue:'Canchas 6, 7 y 8', sport:'general',
+  groups:{
+    'Grupo 1':["Saint Gabriel's 1","SSCC Manquehue 1","Cordillera","San Anselmo"],
+    'Grupo 2':["Saint Gabriel's 2","SSCC Manquehue 2","Cumbres de Salamanca","Mayor de Peñalolén"],
+    'Grupo 3':["Saint Gabriel's 3","San Benito","SSCC Viña del Mar","Instituto Inglés (Rancagua)"]
+  },
+  hasGeneral:true,
+  matches:[
+    {day:'Viernes 4', time:'15:00', court:'Cancha 6', phase:'grupos', group:'Grupo 1', home:"Saint Gabriel's 1", away:'Cordillera'},
+    {day:'Viernes 4', time:'15:00', court:'Cancha 7', phase:'grupos', group:'Grupo 2', home:"Saint Gabriel's 2", away:'Cumbres de Salamanca'},
+    {day:'Viernes 4', time:'15:00', court:'Cancha 8', phase:'grupos', group:'Grupo 3', home:'SSCC Viña del Mar', away:'Instituto Inglés (Rancagua)'},
+    {day:'Viernes 4', time:'16:00', court:'Cancha 6', phase:'grupos', group:'Grupo 1', home:'SSCC Manquehue 1', away:'San Anselmo'},
+    {day:'Viernes 4', time:'16:00', court:'Cancha 7', phase:'grupos', group:'Grupo 2', home:'SSCC Manquehue 2', away:'Mayor de Peñalolén'},
+    {day:'Viernes 4', time:'16:00', court:'Cancha 8', phase:'grupos', group:'Grupo 3', home:"Saint Gabriel's 3", away:'San Benito'},
+
+    {day:'Sábado 5', time:'09:30', court:'Cancha 6', phase:'grupos', group:'Grupo 1', home:"Saint Gabriel's 1", away:'San Anselmo'},
+    {day:'Sábado 5', time:'09:30', court:'Cancha 7', phase:'grupos', group:'Grupo 2', home:'SSCC Manquehue 2', away:'Cumbres de Salamanca'},
+    {day:'Sábado 5', time:'09:30', court:'Cancha 8', phase:'grupos', group:'Grupo 3', home:"Saint Gabriel's 3", away:'Instituto Inglés (Rancagua)'},
+    {day:'Sábado 5', time:'10:30', court:'Cancha 6', phase:'grupos', group:'Grupo 1', home:'SSCC Manquehue 1', away:'Cordillera'},
+    {day:'Sábado 5', time:'10:30', court:'Cancha 7', phase:'grupos', group:'Grupo 2', home:"Saint Gabriel's 2", away:'Mayor de Peñalolén'},
+    {day:'Sábado 5', time:'10:30', court:'Cancha 8', phase:'grupos', group:'Grupo 3', home:"Saint Gabriel's 3", away:'SSCC Viña del Mar'},
+    {day:'Sábado 5', time:'11:30', court:'Cancha 6', phase:'grupos', group:'Grupo 1', home:"Saint Gabriel's 1", away:'SSCC Manquehue 1'},
+    {day:'Sábado 5', time:'11:30', court:'Cancha 7', phase:'grupos', group:'Grupo 2', home:"Saint Gabriel's 2", away:'SSCC Manquehue 2'},
+    {day:'Sábado 5', time:'11:30', court:'Cancha 8', phase:'grupos', group:'Grupo 3', home:'SSCC Viña del Mar', away:'San Benito'},
+    {day:'Sábado 5', time:'12:30', court:'Cancha 6', phase:'grupos', group:'Grupo 1', home:'San Anselmo', away:'Cordillera'},
+    {day:'Sábado 5', time:'12:30', court:'Cancha 7', phase:'grupos', group:'Grupo 2', home:'Mayor de Peñalolén', away:'Cumbres de Salamanca'},
+    {day:'Sábado 5', time:'12:30', court:'Cancha 8', phase:'grupos', group:'Grupo 3', home:'Instituto Inglés (Rancagua)', away:'San Benito'},
+
+    {day:'Sábado 5', time:'14:30', court:'Cancha 6', phase:'llave', copa:'ORO', pair:'ORO_A', leg:1, label:'Semifinal Oro (ida)', home:GEN(1), away:GEN(4)},
+    {day:'Sábado 5', time:'14:30', court:'Cancha 7', phase:'llave', copa:'PLATA', pair:'PLATA_A', leg:1, label:'Semifinal Plata (ida)', home:GEN(5), away:GEN(8)},
+    {day:'Sábado 5', time:'14:30', court:'Cancha 8', phase:'llave', copa:'BRONCE', pair:'BRONCE_A', leg:1, label:'Semifinal Bronce (ida)', home:GEN(9), away:GEN(12)},
+    {day:'Sábado 5', time:'15:30', court:'Cancha 6', phase:'llave', copa:'ORO', pair:'ORO_B', leg:1, label:'Semifinal Oro (ida)', home:GEN(2), away:GEN(3)},
+    {day:'Sábado 5', time:'15:30', court:'Cancha 7', phase:'llave', copa:'PLATA', pair:'PLATA_B', leg:1, label:'Semifinal Plata (ida)', home:GEN(6), away:GEN(7)},
+    {day:'Sábado 5', time:'15:30', court:'Cancha 8', phase:'llave', copa:'BRONCE', pair:'BRONCE_B', leg:1, label:'Semifinal Bronce (ida)', home:GEN(10), away:GEN(11)},
+
+    {day:'Domingo 6', time:'09:00', court:'Cancha 6', phase:'llave', copa:'ORO', pair:'ORO_A', leg:2, label:'Semifinal Oro (vuelta)', home:GEN(1), away:GEN(4)},
+    {day:'Domingo 6', time:'09:00', court:'Cancha 7', phase:'llave', copa:'PLATA', pair:'PLATA_A', leg:2, label:'Semifinal Plata (vuelta)', home:GEN(5), away:GEN(8)},
+    {day:'Domingo 6', time:'09:00', court:'Cancha 8', phase:'llave', copa:'BRONCE', pair:'BRONCE_A', leg:2, label:'Semifinal Bronce (vuelta)', home:GEN(9), away:GEN(12)},
+    {day:'Domingo 6', time:'10:00', court:'Cancha 6', phase:'llave', copa:'ORO', pair:'ORO_B', leg:2, label:'Semifinal Oro (vuelta)', home:GEN(2), away:GEN(3)},
+    {day:'Domingo 6', time:'10:00', court:'Cancha 7', phase:'llave', copa:'PLATA', pair:'PLATA_B', leg:2, label:'Semifinal Plata (vuelta)', home:GEN(6), away:GEN(7)},
+    {day:'Domingo 6', time:'10:00', court:'Cancha 8', phase:'llave', copa:'BRONCE', pair:'BRONCE_B', leg:2, label:'Semifinal Bronce (vuelta)', home:GEN(10), away:GEN(11)},
+
+    {day:'Domingo 6', time:'11:00', court:'Cancha 6', phase:'llave', copa:'ORO', label:'3° y 4° lugar — Oro', home:AGG('ORO_A','L'), away:AGG('ORO_B','L')},
+    {day:'Domingo 6', time:'11:00', court:'Cancha 7', phase:'llave', copa:'PLATA', label:'3° y 4° lugar — Plata', home:AGG('PLATA_A','L'), away:AGG('PLATA_B','L')},
+    {day:'Domingo 6', time:'11:00', court:'Cancha 8', phase:'llave', copa:'BRONCE', label:'3° y 4° lugar — Bronce', home:AGG('BRONCE_A','L'), away:AGG('BRONCE_B','L')},
+    {day:'Domingo 6', time:'12:00', court:'Cancha 6', phase:'llave', copa:'ORO', label:'🏆 Final Oro', home:AGG('ORO_A','W'), away:AGG('ORO_B','W')},
+    {day:'Domingo 6', time:'12:00', court:'Cancha 7', phase:'llave', copa:'PLATA', label:'🏆 Final Plata', home:AGG('PLATA_A','W'), away:AGG('PLATA_B','W')},
+    {day:'Domingo 6', time:'12:00', court:'Cancha 8', phase:'llave', copa:'BRONCE', label:'🏆 Final Bronce', home:AGG('BRONCE_A','W'), away:AGG('BRONCE_B','W')},
+  ]
+},
+
+// -------------------------------------------------------------------- MINI
+{
+  id:'mini', tabLabel:'Mini · Sub13', title:'Mini — Sub 13',
+  venue:'Cancha 5', sport:'general',
+  groups:{ 'General':["Saint Gabriel's","SSCC Manquehue","SSCC Viña del Mar","I. O'Higgins","Mayor de Peñalolén","Cumbres de Salamanca"] },
+  hasMini:true,
+  matches:[
+    {day:'Viernes 4', time:'15:00', court:'Cancha 5', phase:'grupos', group:'General', home:'Mayor de Peñalolén', away:'SSCC Manquehue'},
+    {day:'Viernes 4', time:'16:00', court:'Cancha 5', phase:'grupos', group:'General', home:"Saint Gabriel's", away:'SSCC Viña del Mar'},
+    {day:'Viernes 4', time:'17:00', court:'Cancha 5', phase:'grupos', group:'General', home:"I. O'Higgins", away:'Cumbres de Salamanca'},
+
+    {day:'Sábado 5', time:'09:00', court:'Cancha 5', phase:'grupos', group:'General', home:'Cumbres de Salamanca', away:"Saint Gabriel's"},
+    {day:'Sábado 5', time:'10:00', court:'Cancha 5', phase:'grupos', group:'General', home:"I. O'Higgins", away:'SSCC Manquehue'},
+    {day:'Sábado 5', time:'11:00', court:'Cancha 5', phase:'grupos', group:'General', home:'Mayor de Peñalolén', away:'SSCC Viña del Mar'},
+    {day:'Sábado 5', time:'12:00', court:'Cancha 5', phase:'grupos', group:'General', home:"Saint Gabriel's", away:'SSCC Manquehue'},
+    {day:'Sábado 5', time:'13:00', court:'Cancha 5', phase:'grupos', group:'General', home:"I. O'Higgins", away:'Mayor de Peñalolén'},
+    {day:'Sábado 5', time:'14:00', court:'Cancha 5', phase:'grupos', group:'General', home:'SSCC Viña del Mar', away:'Cumbres de Salamanca'},
+    {day:'Sábado 5', time:'15:00', court:'Cancha 5', phase:'grupos', group:'General', home:"I. O'Higgins", away:"Saint Gabriel's"},
+    {day:'Sábado 5', time:'16:00', court:'Cancha 5', phase:'grupos', group:'General', home:'Cumbres de Salamanca', away:'Mayor de Peñalolén'},
+    {day:'Sábado 5', time:'17:00', court:'Cancha 5', phase:'grupos', group:'General', home:'SSCC Manquehue', away:'SSCC Viña del Mar'},
+
+    {day:'Domingo 6', time:'09:00', court:'Cancha 5', phase:'grupos', group:'General', home:'SSCC Manquehue', away:'Cumbres de Salamanca'},
+    {day:'Domingo 6', time:'10:00', court:'Cancha 5', phase:'grupos', group:'General', home:"I. O'Higgins", away:'SSCC Viña del Mar'},
+    {day:'Domingo 6', time:'11:00', court:'Cancha 5', phase:'grupos', group:'General', home:"Saint Gabriel's", away:'Mayor de Peñalolén'},
+
+    {day:'Domingo 6', time:'12:00', court:'Cancha 5', phase:'llave', label:'Definición 5° y 6° lugar', home:MINI(5), away:MINI(6)},
+    {day:'Domingo 6', time:'13:00', court:'Cancha 5', phase:'llave', label:'🥉 Definición 3° y 4° lugar', home:MINI(3), away:MINI(4)},
+    {day:'Domingo 6', time:'14:00', court:'Cancha 5', phase:'llave', label:'🏆 Gran Final', home:MINI(1), away:MINI(2)},
+  ]
+},
+
+// ----------------------------------------------------------------- INFANTIL
+{
+  id:'infantil', tabLabel:'Infantil · Sub15', title:'Infantil — Sub 15',
+  venue:'Estadio Colegio San Gabriel', sport:'general',
+  groups:{
+    'Grupo 1':['Saint Gabriel','San Anselmo','Instituto Inglés','SSCC Viña del Mar'],
+    'Grupo 2':['SSCC Manquehue','San Gabriel 2','Colegio Mayor',"Instituto O'Higgins"]
+  },
+  hasCopa:true,
+  matches:[
+    {day:'Viernes 4', time:'15:15', court:'Cancha 2', phase:'grupos', group:'Grupo 1', label:'G1-P1', home:'Saint Gabriel', away:'SSCC Viña del Mar'},
+    {day:'Viernes 4', time:'15:15', court:'Cancha 3', phase:'grupos', group:'Grupo 2', label:'G2-P1', home:'SSCC Manquehue', away:"Instituto O'Higgins"},
+    {day:'Viernes 4', time:'16:30', court:'Cancha 3', phase:'grupos', group:'Grupo 1', label:'G1-P2', home:'San Anselmo', away:'Instituto Inglés'},
+    {day:'Viernes 4', time:'16:30', court:'Cancha 2', phase:'grupos', group:'Grupo 2', label:'G2-P2', home:'San Gabriel 2', away:'Colegio Mayor'},
+
+    {day:'Sábado 5', time:'09:00', court:'Cancha 3', phase:'grupos', group:'Grupo 2', label:'G2-P3', home:'SSCC Manquehue', away:'Colegio Mayor'},
+    {day:'Sábado 5', time:'09:00', court:'Cancha 2', phase:'grupos', group:'Grupo 2', label:'G2-P4', home:"Instituto O'Higgins", away:'San Gabriel 2'},
+    {day:'Sábado 5', time:'10:15', court:'Cancha 2', phase:'grupos', group:'Grupo 1', label:'G1-P3', home:'Saint Gabriel', away:'Instituto Inglés'},
+    {day:'Sábado 5', time:'10:15', court:'Cancha 3', phase:'grupos', group:'Grupo 1', label:'G1-P4', home:'SSCC Viña del Mar', away:'San Anselmo'},
+    {day:'Sábado 5', time:'11:30', court:'Cancha 3', phase:'grupos', group:'Grupo 2', label:'G2-P5', home:'SSCC Manquehue', away:'San Gabriel 2'},
+    {day:'Sábado 5', time:'11:30', court:'Cancha 2', phase:'grupos', group:'Grupo 2', label:'G2-P6', home:'Colegio Mayor', away:"Instituto O'Higgins"},
+    {day:'Sábado 5', time:'12:45', court:'Cancha 2', phase:'grupos', group:'Grupo 1', label:'G1-P5', home:'Saint Gabriel', away:'San Anselmo'},
+    {day:'Sábado 5', time:'12:45', court:'Cancha 3', phase:'grupos', group:'Grupo 1', label:'G1-P6', home:'Instituto Inglés', away:'SSCC Viña del Mar'},
+
+    {day:'Sábado 5', time:'14:00', court:'Cancha 1', phase:'llave', copa:'PLATA', label:'Plata-P1', home:T('Grupo 1',3), away:T('Grupo 2',4)},
+    {day:'Sábado 5', time:'14:00', court:'Gimnasio', phase:'llave', copa:'PLATA', label:'Plata-P2', home:T('Grupo 1',4), away:T('Grupo 2',3)},
+    {day:'Sábado 5', time:'15:15', court:'Gimnasio', phase:'llave', copa:'ORO', label:'Oro-P1', home:T('Grupo 1',1), away:T('Grupo 2',2)},
+    {day:'Sábado 5', time:'15:15', court:'Cancha 1', phase:'llave', copa:'ORO', label:'Oro-P2', home:T('Grupo 1',2), away:T('Grupo 2',1)},
+    {day:'Sábado 5', time:'16:30', court:'Cancha 1', phase:'llave', copa:'PLATA', label:'Plata-P3', home:T('Grupo 1',3), away:T('Grupo 2',3)},
+    {day:'Sábado 5', time:'16:30', court:'Gimnasio', phase:'llave', copa:'PLATA', label:'Plata-P4', home:T('Grupo 2',4), away:T('Grupo 1',4)},
+    {day:'Sábado 5', time:'17:45', court:'Gimnasio', phase:'llave', copa:'ORO', label:'Oro-P3', home:T('Grupo 1',1), away:T('Grupo 2',1)},
+    {day:'Sábado 5', time:'17:45', court:'Cancha 1', phase:'llave', copa:'ORO', label:'Oro-P4', home:T('Grupo 2',2), away:T('Grupo 1',2)},
+
+    {day:'Domingo 6', time:'09:00', court:'Gimnasio', phase:'llave', copa:'ORO', label:'Oro-P5', home:T('Grupo 1',1), away:T('Grupo 1',2)},
+    {day:'Domingo 6', time:'09:00', court:'Cancha 1', phase:'llave', copa:'PLATA', label:'Plata-P5', home:T('Grupo 1',3), away:T('Grupo 1',4)},
+    {day:'Domingo 6', time:'10:15', court:'Cancha 1', phase:'llave', copa:'ORO', label:'Oro-P6', home:T('Grupo 2',1), away:T('Grupo 2',2)},
+    {day:'Domingo 6', time:'10:15', court:'Gimnasio', phase:'llave', copa:'PLATA', label:'Plata-P6', home:T('Grupo 2',3), away:T('Grupo 2',4)},
+
+    {day:'Domingo 6', time:'11:30', court:'Cancha 1', phase:'llave', copa:'PLATA', label:'Definición 7° y 8° lugar', home:COPA('PLATA',3), away:COPA('PLATA',4)},
+    {day:'Domingo 6', time:'11:30', court:'Gimnasio', phase:'llave', copa:'ORO', label:'🥉 Definición 3° y 4° lugar', home:COPA('ORO',3), away:COPA('ORO',4)},
+    {day:'Domingo 6', time:'13:00', court:'Cancha 1', phase:'llave', copa:'PLATA', label:'🏆 Final Copa de Plata (5°-6°)', home:COPA('PLATA',1), away:COPA('PLATA',2)},
+    {day:'Domingo 6', time:'13:00', court:'Gimnasio', phase:'llave', copa:'ORO', label:'🏆 GRAN FINAL Copa de Oro (1°-2°)', home:COPA('ORO',1), away:COPA('ORO',2)},
+  ]
+},
+
+// ----------------------------------------------------------------- SUPERIOR
+{
+  id:'superior', tabLabel:'Superior · Sub18', title:'Superior — Sub 18',
+  venue:'Estadio Colegio San Gabriel', sport:'general',
+  groups:{
+    'Grupo 1':['Saint Gabriel','Colegio Mayor','San Benito','SSCC Viña del Mar'],
+    'Grupo 2':['SSCC Manquehue','Cahuala','Ex alumnos',"Instituto O'Higgins"]
+  },
+  hasCopa:true,
+  matches:[
+    {day:'Viernes 4', time:'16:00', court:'Gimnasio', phase:'grupos', group:'Grupo 1', label:'G1-P1', home:'Saint Gabriel', away:'SSCC Viña del Mar'},
+    {day:'Viernes 4', time:'16:00', court:'Cancha 1', phase:'grupos', group:'Grupo 2', label:'G2-P1', home:'Cahuala', away:'Ex alumnos'},
+    {day:'Viernes 4', time:'17:15', court:'Cancha 1', phase:'grupos', group:'Grupo 1', label:'G1-P2', home:'Colegio Mayor', away:'San Benito'},
+    {day:'Viernes 4', time:'17:15', court:'Gimnasio', phase:'grupos', group:'Grupo 2', label:'G2-P2', home:'SSCC Manquehue', away:"Instituto O'Higgins"},
+
+    {day:'Sábado 5', time:'09:00', court:'Gimnasio', phase:'grupos', group:'Grupo 1', label:'G1-P3', home:'Saint Gabriel', away:'San Benito'},
+    {day:'Sábado 5', time:'09:00', court:'Cancha 1', phase:'grupos', group:'Grupo 1', label:'G1-P4', home:'SSCC Viña del Mar', away:'Colegio Mayor'},
+    {day:'Sábado 5', time:'10:15', court:'Cancha 1', phase:'grupos', group:'Grupo 2', label:'G2-P3', home:'SSCC Manquehue', away:'Ex alumnos'},
+    {day:'Sábado 5', time:'10:15', court:'Gimnasio', phase:'grupos', group:'Grupo 2', label:'G2-P4', home:"Instituto O'Higgins", away:'Cahuala'},
+    {day:'Sábado 5', time:'11:30', court:'Gimnasio', phase:'grupos', group:'Grupo 1', label:'G1-P5', home:'Saint Gabriel', away:'Colegio Mayor'},
+    {day:'Sábado 5', time:'11:30', court:'Cancha 1', phase:'grupos', group:'Grupo 1', label:'G1-P6', home:'San Benito', away:'SSCC Viña del Mar'},
+    {day:'Sábado 5', time:'12:45', court:'Gimnasio', phase:'grupos', group:'Grupo 2', label:'G2-P5', home:'SSCC Manquehue', away:'Cahuala'},
+    {day:'Sábado 5', time:'12:45', court:'Cancha 1', phase:'grupos', group:'Grupo 2', label:'G2-P6', home:'Ex alumnos', away:"Instituto O'Higgins"},
+
+    {day:'Sábado 5', time:'14:00', court:'Cancha 1', phase:'llave', copa:'PLATA', label:'Plata-P1', home:T('Grupo 1',3), away:T('Grupo 2',4)},
+    {day:'Sábado 5', time:'14:00', court:'Gimnasio', phase:'llave', copa:'PLATA', label:'Plata-P2', home:T('Grupo 1',4), away:T('Grupo 2',3)},
+    {day:'Sábado 5', time:'15:15', court:'Gimnasio', phase:'llave', copa:'ORO', label:'Oro-P1', home:T('Grupo 1',1), away:T('Grupo 2',2)},
+    {day:'Sábado 5', time:'15:15', court:'Cancha 1', phase:'llave', copa:'ORO', label:'Oro-P2', home:T('Grupo 1',2), away:T('Grupo 2',1)},
+    {day:'Sábado 5', time:'16:30', court:'Cancha 1', phase:'llave', copa:'PLATA', label:'Plata-P3', home:T('Grupo 1',3), away:T('Grupo 2',3)},
+    {day:'Sábado 5', time:'16:30', court:'Gimnasio', phase:'llave', copa:'PLATA', label:'Plata-P4', home:T('Grupo 2',4), away:T('Grupo 1',4)},
+    {day:'Sábado 5', time:'17:45', court:'Gimnasio', phase:'llave', copa:'ORO', label:'Oro-P3', home:T('Grupo 1',1), away:T('Grupo 2',1)},
+    {day:'Sábado 5', time:'17:45', court:'Cancha 1', phase:'llave', copa:'ORO', label:'Oro-P4', home:T('Grupo 2',2), away:T('Grupo 1',2)},
+
+    {day:'Domingo 6', time:'09:00', court:'Gimnasio', phase:'llave', copa:'ORO', label:'Oro-P5', home:T('Grupo 1',1), away:T('Grupo 1',2)},
+    {day:'Domingo 6', time:'09:00', court:'Cancha 1', phase:'llave', copa:'PLATA', label:'Plata-P5', home:T('Grupo 1',3), away:T('Grupo 1',4)},
+    {day:'Domingo 6', time:'10:15', court:'Cancha 1', phase:'llave', copa:'ORO', label:'Oro-P6', home:T('Grupo 2',1), away:T('Grupo 2',2)},
+    {day:'Domingo 6', time:'10:15', court:'Gimnasio', phase:'llave', copa:'PLATA', label:'Plata-P6', home:T('Grupo 2',3), away:T('Grupo 2',4)},
+
+    {day:'Domingo 6', time:'11:30', court:'Cancha 1', phase:'llave', copa:'PLATA', label:'Definición 7° y 8° lugar', home:COPA('PLATA',3), away:COPA('PLATA',4)},
+    {day:'Domingo 6', time:'11:30', court:'Gimnasio', phase:'llave', copa:'ORO', label:'🥉 Definición 3° y 4° lugar', home:COPA('ORO',3), away:COPA('ORO',4)},
+    {day:'Domingo 6', time:'13:00', court:'Cancha 1', phase:'llave', copa:'PLATA', label:'🏆 Final Copa de Plata (5°-6°)', home:COPA('PLATA',1), away:COPA('PLATA',2)},
+    {day:'Domingo 6', time:'13:00', court:'Gimnasio', phase:'llave', copa:'ORO', label:'🏆 GRAN FINAL Copa de Oro (1°-2°)', home:COPA('ORO',1), away:COPA('ORO',2)},
+  ]
+},
+
+];
+
+// give every match a stable id
+CATEGORIES.forEach(cat=>{
+  cat.matches.forEach((m,i)=>{ m.id = cat.id+'_'+i; });
+});
+
+// ---------- STATE ----------
+let activeCatId = CATEGORIES[0].id;
+let activeSub = 'tabla';
+const scores = {};      // matchId -> {h:Number, a:Number}
+const manualNames = {}; // matchId+'_h'/'_a' -> string (only for AGG placeholders, editable override)
+
+// ---------- STORAGE (Firebase Firestore, en tiempo real) ----------
+// Si todavía no pegaste tu configuración de Firebase arriba, usamos
+// localStorage como respaldo (guarda solo en este navegador).
+let firestoreReady = false;
+if(CONFIG_PENDING){
+  document.getElementById('syncNote').textContent = 'Falta conectar la base de datos (pega tu configuración de Firebase en el código). Por ahora se guarda solo en este navegador.';
+}
+
+async function saveScore(matchId, h, a){
+  scores[matchId] = {h,a};
+  if(db){
+    try{ await setDoc(doc(db, SCORES_COLLECTION, matchId), {h, a, updatedAt: Date.now()}); }
+    catch(e){ console.error('save failed', e); }
+  } else {
+    try{ localStorage.setItem('linaes2026:'+matchId, JSON.stringify({h,a})); }catch(e){}
+  }
+}
+
+function startRealtimeSync(){
+  if(db){
+    onSnapshot(collection(db, SCORES_COLLECTION), (snap)=>{
+      snap.docChanges().forEach(change=>{
+        const d = change.doc.data();
+        scores[change.doc.id] = {h:d.h, a:d.a};
+      });
+      firestoreReady = true;
+      render();
+    }, (err)=>{
+      console.error('Storage list failed:', err);
+      document.getElementById('syncNote').textContent = 'No se pudo conectar a la base de datos. Revisa la configuración de Firebase y las reglas de Firestore.';
+      firestoreReady = true;
+      render();
+    });
+  } else {
+    try{
+      for(let i=0;i<localStorage.length;i++){
+        const k = localStorage.key(i);
+        if(k && k.indexOf('linaes2026:')===0){
+          scores[k.slice('linaes2026:'.length)] = JSON.parse(localStorage.getItem(k));
+        }
+      }
+    }catch(e){}
+    firestoreReady = true;
+  }
+}
+
+
+// ---------- STANDINGS HELPERS ----------
+function emptyRow(team){ return {team, pj:0,pg:0,pe:0,pp:0,gf:0,gc:0,pts:0}; }
+
+function computeGroupTable(cat, groupName){
+  const teams = cat.groups[groupName];
+  const table = {};
+  teams.forEach(t=> table[t]=emptyRow(t));
+  cat.matches.forEach(m=>{
+    if(m.phase!=='grupos' || m.group!==groupName) return;
+    const s = scores[m.id];
+    if(!s || s.h===undefined || s.a===undefined || s.h===null || s.a===null || s.h==='' || s.a==='') return;
+    const h = Number(s.h), a = Number(s.a);
+    if(isNaN(h)||isNaN(a)) return;
+    const rh = table[m.home], ra = table[m.away];
+    if(!rh || !ra) return;
+    rh.pj++; ra.pj++;
+    rh.gf+=h; rh.gc+=a; ra.gf+=a; ra.gc+=h;
+    if(h>a){ rh.pg++; rh.pts+=3; ra.pp++; }
+    else if(h<a){ ra.pg++; ra.pts+=3; rh.pp++; }
+    else { rh.pe++; ra.pe++; rh.pts+=1; ra.pts+=1; }
+  });
+  const rows = teams.map(t=>table[t]);
+  rows.sort((x,y)=> y.pts-x.pts || (y.gf-y.gc)-(x.gf-x.gc) || y.gf-x.gf || x.team.localeCompare(y.team));
+  return rows;
+}
+
+function getScore(m){
+  const s = scores[m.id];
+  if(!s) return null;
+  if(s.h===undefined||s.a===undefined||s.h===null||s.a===null||s.h===''||s.a==='') return null;
+  const h=Number(s.h), a=Number(s.a);
+  if(isNaN(h)||isNaN(a)) return null;
+  return {h,a};
+}
+
+// Resolve a slot descriptor to {name, known} using the standings context of a category
+function resolveSlot(cat, slot, ctx){
+  if(typeof slot==='string') return {name:slot, known:true};
+  if(slot.g){
+    const rows = ctx.groupTables[slot.g];
+    const row = rows && rows[slot.p-1];
+    return row ? {name:row.team, known:true} : {name: slot.p+'° '+slot.g, known:false};
+  }
+  if(slot.gen){
+    const row = ctx.general && ctx.general[slot.gen-1];
+    return row ? {name:row.team, known:true} : {name: slot.gen+'° General', known:false};
+  }
+  if(slot.mini){
+    const row = ctx.groupTables['General'] && ctx.groupTables['General'][slot.mini-1];
+    return row ? {name:row.team, known:true} : {name: slot.mini+'° lugar', known:false};
+  }
+  if(slot.copaRank){
+    const rows = ctx.copaTables && ctx.copaTables[slot.copaRank];
+    const row = rows && rows[slot.pos-1];
+    return row ? {name:row.team, known:true} : {name: slot.pos+'° Copa '+cap(slot.copaRank), known:false};
+  }
+  if(slot.agg){
+    const pairInfo = ctx.aggregates && ctx.aggregates[slot.agg];
+    if(pairInfo && pairInfo.decided){
+      const name = slot.side==='W' ? pairInfo.winner : pairInfo.loser;
+      return {name, known:true};
+    }
+    const label = slot.side==='W' ? 'Ganador semifinal' : 'Perdedor semifinal';
+    return {name: label, known:false};
+  }
+  return {name:'?', known:false};
+}
+function cap(s){ return s.charAt(0)+s.slice(1).toLowerCase(); }
+
+// Build the full resolution context for a category
+function buildContext(cat){
+  const ctx = {groupTables:{}};
+  Object.keys(cat.groups).forEach(g=>{ ctx.groupTables[g] = computeGroupTable(cat, g); });
+
+  if(cat.hasGeneral){
+    // merge 3 groups: all 1st places ranked together, then all 2nd places, etc.
+    const groupNames = Object.keys(cat.groups);
+    const general = [];
+    for(let pos=0; pos<4; pos++){
+      const bucket = groupNames.map(g=> ctx.groupTables[g][pos]).filter(Boolean);
+      bucket.sort((x,y)=> y.pts-x.pts || (y.gf-y.gc)-(x.gf-x.gc) || y.gf-x.gf);
+      general.push(...bucket);
+    }
+    ctx.general = general;
+  }
+
+  if(cat.hasCopa){
+    ['ORO','PLATA'].forEach(copa=>{
+      const groupNames = Object.keys(cat.groups);
+      const posSet = copa==='ORO' ? [1,2] : [3,4];
+      const teamNames = [];
+      groupNames.forEach(g=> posSet.forEach(p=>{
+        const row = ctx.groupTables[g][p-1];
+        if(row) teamNames.push(row.team);
+      }));
+      const table = {};
+      teamNames.forEach(t=> table[t]=emptyRow(t));
+      cat.matches.forEach(m=>{
+        if(m.copa!==copa) return;
+        if(m.phase==='llave' && m.label && (m.label.indexOf('Definición')>=0 || m.label.indexOf('Final')>=0 || m.label.indexOf('FINAL')>=0)) return;
+        const homeR = resolveSlot(cat, m.home, ctx);
+        const awayR = resolveSlot(cat, m.away, ctx);
+        if(!homeR.known || !awayR.known) return;
+        if(!(homeR.name in table) || !(awayR.name in table)) return;
+        const sc = getScore(m);
+        if(!sc) return;
+        const rh=table[homeR.name], ra=table[awayR.name];
+        rh.pj++; ra.pj++;
+        rh.gf+=sc.h; rh.gc+=sc.a; ra.gf+=sc.a; ra.gc+=sc.h;
+        if(sc.h>sc.a){ rh.pg++; rh.pts+=3; ra.pp++; }
+        else if(sc.h<sc.a){ ra.pg++; ra.pts+=3; rh.pp++; }
+        else { rh.pe++; ra.pe++; rh.pts+=1; ra.pts+=1; }
+      });
+      // also count the original group-stage match between the paired teams (already in group table,
+      // but re-derive here from the raw group match so the copa mini-table is self-consistent)
+      const rows = teamNames.map(t=>table[t]);
+      rows.sort((x,y)=> y.pts-x.pts || (y.gf-y.gc)-(x.gf-x.gc) || y.gf-x.gf || x.team.localeCompare(y.team));
+      ctx.copaTables = ctx.copaTables || {};
+      ctx.copaTables[copa] = rows;
+    });
+  }
+
+  if(cat.hasGeneral){
+    // aggregate two-legged semifinals for Mini B
+    ctx.aggregates = {};
+    const pairs = {};
+    cat.matches.forEach(m=>{
+      if(m.phase==='llave' && m.pair){
+        pairs[m.pair] = pairs[m.pair] || [];
+        pairs[m.pair].push(m);
+      }
+    });
+    Object.keys(pairs).forEach(pairId=>{
+      const legs = pairs[pairId];
+      const homeR = resolveSlot(cat, legs[0].home, ctx);
+      const awayR = resolveSlot(cat, legs[0].away, ctx);
+      let sumH=0, sumA=0, legsPlayed=0;
+      legs.forEach(m=>{
+        const sc = getScore(m);
+        if(sc){ sumH+=sc.h; sumA+=sc.a; legsPlayed++; }
+      });
+      const decided = legsPlayed===legs.length && legs.length>0 && sumH!==sumA;
+      ctx.aggregates[pairId] = {
+        home:homeR.name, away:awayR.name,
+        sumH, sumA, legsPlayed, totalLegs:legs.length,
+        decided,
+        winner: decided ? (sumH>sumA?homeR.name:awayR.name) : null,
+        loser: decided ? (sumH>sumA?awayR.name:homeR.name) : null,
+      };
+    });
+  }
+
+  return ctx;
+}
+
+// ---------- RENDER ----------
+const tabsEl = document.getElementById('tabs');
+const catTitleEl = document.getElementById('catTitle');
+const catVenueEl = document.getElementById('catVenue');
+const contentEl = document.getElementById('content');
+
+function renderTabs(){
+  tabsEl.innerHTML='';
+  CATEGORIES.forEach(cat=>{
+    const b = document.createElement('button');
+    b.className = 'tab'+(cat.id===activeCatId?' active':'');
+    b.textContent = cat.tabLabel;
+    b.onclick = ()=>{ activeCatId=cat.id; render(); };
+    tabsEl.appendChild(b);
+  });
+}
+
+document.querySelectorAll('.subbtn').forEach(b=>{
+  b.onclick = ()=>{ activeSub=b.dataset.sub; render(); };
+});
+
+function render(){
+  renderTabs();
+  const cat = CATEGORIES.find(c=>c.id===activeCatId);
+  catTitleEl.textContent = cat.title;
+  catVenueEl.textContent = cat.venue;
+  document.querySelectorAll('.subbtn').forEach(b=> b.classList.toggle('active', b.dataset.sub===activeSub));
+
+  const ctx = buildContext(cat);
+
+  if(activeSub==='tabla') renderTabla(cat, ctx);
+  else if(activeSub==='fixture') renderFixture(cat, ctx);
+  else renderLlaves(cat, ctx);
+}
+
+function renderTabla(cat, ctx){
+  let html = '';
+  Object.keys(cat.groups).forEach(g=>{
+    const rows = ctx.groupTables[g];
+    const qualifyCount = cat.hasGeneral ? rows.length : (cat.hasMini? 0 : (cat.hasCopa? 2 : 0));
+    html += `<div class="group-block">
+      <div class="group-title">${g==='General'?'Clasificación':g}<span class="line"></span></div>
+      <table class="standings"><thead><tr>
+        <th>Equipo</th><th>PJ</th><th>G</th><th>E</th><th>P</th><th>GF</th><th>GC</th><th>Dif</th><th>Pts</th>
+      </tr></thead><tbody>`;
+    rows.forEach((r,i)=>{
+      const qualifies = cat.hasCopa && i<2;
+      html += `<tr class="${qualifies?'qualify':''}">
+        <td class="team">${i+1}. ${escapeHtml(r.team)}</td>
+        <td>${r.pj}</td><td>${r.pg}</td><td>${r.pe}</td><td>${r.pp}</td>
+        <td>${r.gf}</td><td>${r.gc}</td><td>${r.gf-r.gc}</td><td class="pts">${r.pts}</td>
+      </tr>`;
+    });
+    html += `</tbody></table></div>`;
+  });
+
+  if(cat.hasCopa){
+    html += `<div class="copa-tables">`;
+    ['ORO','PLATA'].forEach(copa=>{
+      const rows = ctx.copaTables[copa];
+      html += `<div class="group-block">
+        <span class="copa-label copa-${copa}">Copa ${cap(copa)}</span>
+        <table class="standings"><thead><tr>
+          <th>Equipo</th><th>PJ</th><th>G</th><th>E</th><th>P</th><th>GF</th><th>GC</th><th>Dif</th><th>Pts</th>
+        </tr></thead><tbody>`;
+      rows.forEach((r,i)=>{
+        html += `<tr>
+          <td class="team">${i+1}. ${escapeHtml(r.team)}</td>
+          <td>${r.pj}</td><td>${r.pg}</td><td>${r.pe}</td><td>${r.pp}</td>
+          <td>${r.gf}</td><td>${r.gc}</td><td>${r.gf-r.gc}</td><td class="pts">${r.pts}</td>
+        </tr>`;
+      });
+      html += `</tbody></table></div>`;
+    });
+    html += `</div>`;
+    html += `<p class="info-note"><b>Cómo se arma:</b> la Copa Oro combina a los 2 primeros de cada grupo y la Copa Plata a los puestos 3° y 4°. Se calcula con el partido de grupos entre ellos más los cruces Oro/Plata. La final y el 3er/4to lugar se completan solos apenas hay resultados suficientes.</p>`;
+  }
+  if(cat.hasGeneral){
+    const general = ctx.general;
+    html += `<div class="group-block">
+      <div class="group-title">Clasificación General (12 equipos)<span class="line"></span></div>
+      <table class="standings"><thead><tr>
+        <th>#</th><th>Equipo</th><th>Pts</th><th>Dif</th>
+      </tr></thead><tbody>`;
+    general.forEach((r,i)=>{
+      html += `<tr><td>${i+1}</td><td class="team">${escapeHtml(r.team)}</td><td class="pts">${r.pts}</td><td>${r.gf-r.gc}</td></tr>`;
+    });
+    html += `</tbody></table></div>`;
+    html += `<p class="info-note"><b>Cómo se arma:</b> la clasificación general junta los 3 grupos ordenando primero a los 3 punteros entre sí, luego a los 3 segundos, y así. Con eso se arman las llaves Oro (1°-4°), Plata (5°-8°) y Bronce (9°-12°) a ida y vuelta.</p>`;
+  }
+  if(cat.hasMini){
+    html += `<p class="info-note">Tabla única de 6 equipos, todos contra todos. Los puestos 1° a 6° arman directamente la final, el 3er/4to lugar y la definición de 5° y 6°.</p>`;
+  }
+
+  contentEl.innerHTML = html;
+}
+
+function renderFixture(cat, ctx){
+  const days = [...new Set(cat.matches.map(m=>m.day))];
+  let html='';
+  days.forEach(day=>{
+    html += `<div class="day-block"><div class="day-title">${day}</div>`;
+    cat.matches.filter(m=>m.day===day).forEach(m=>{
+      html += matchCard(cat, m, ctx);
+    });
+    html += `</div>`;
+  });
+  contentEl.innerHTML = html;
+  wireInputs(cat, ctx);
+}
+
+function renderLlaves(cat, ctx){
+  const llaveMatches = cat.matches.filter(m=>m.phase==='llave');
+  const days = [...new Set(llaveMatches.map(m=>m.day))];
+  let html='';
+  days.forEach(day=>{
+    html += `<div class="day-block"><div class="day-title">${day}</div>`;
+    llaveMatches.filter(m=>m.day===day).forEach(m=>{
+      html += matchCard(cat, m, ctx);
+    });
+    html += `</div>`;
+  });
+  if(!llaveMatches.length) html = '<p class="info-note">Esta categoría no tiene fase de llaves.</p>';
+  contentEl.innerHTML = html;
+  wireInputs(cat, ctx);
+}
+
+function matchCard(cat, m, ctx){
+  const homeR = resolveSlot(cat, m.home, ctx);
+  const awayR = resolveSlot(cat, m.away, ctx);
+  const sc = getScore(m);
+  const hVal = sc ? sc.h : (scores[m.id]&&scores[m.id].h!=null?scores[m.id].h:'');
+  const aVal = sc ? sc.a : (scores[m.id]&&scores[m.id].a!=null?scores[m.id].a:'');
+  const winnerH = sc && sc.h>sc.a;
+  const winnerA = sc && sc.a>sc.h;
+  const copaChip = m.copa ? `<span class="copa-chip copa-${m.copa}">${cap(m.copa)}</span>` : '';
+  const label = m.label ? `<span style="color:var(--muted); font-size:11px;">${escapeHtml(m.label)}</span>` : '';
+
+  return `<div class="match-card">
+    <div class="match-meta">
+      <span class="time">${m.time}</span>
+      <span class="court-tag">${m.court}</span>
+      ${copaChip}
+    </div>
+    ${label?`<div style="margin-bottom:6px;">${label}</div>`:''}
+    <div class="teams-row">
+      <div class="team-col">
+        <div class="team-name ${!homeR.known?'placeholder':''} ${winnerH?'winner':''}">${escapeHtml(homeR.name)}</div>
+      </div>
+      <div class="score-col">
+        <input type="number" min="0" class="score-input" data-match="${m.id}" data-side="h" value="${hVal}" placeholder="-">
+        <span class="vs-label">–</span>
+        <input type="number" min="0" class="score-input" data-match="${m.id}" data-side="a" value="${aVal}" placeholder="-">
+      </div>
+      <div class="team-col" style="text-align:right;">
+        <div class="team-name ${!awayR.known?'placeholder':''} ${winnerA?'winner':''}" style="margin-left:auto;">${escapeHtml(awayR.name)}</div>
+      </div>
+    </div>
+    ${(!homeR.known || !awayR.known) ? `<div class="pending-tag">Se completa automáticamente cuando estén los resultados previos</div>`:''}
+  </div>`;
+}
+
+function wireInputs(cat, ctx){
+  contentEl.querySelectorAll('.score-input').forEach(inp=>{
+    inp.addEventListener('change', async (e)=>{
+      const matchId = e.target.dataset.match;
+      const side = e.target.dataset.side;
+      const cur = scores[matchId] || {h:'',a:''};
+      const v = e.target.value;
+      const next = {...cur, [side]: v===''? '' : Number(v)};
+      await saveScore(matchId, next.h, next.a);
+      render();
+    });
+  });
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+// ---------- INIT ----------
+(function init(){
+  contentEl.innerHTML = '<p class="info-note">Conectando…</p>';
+  startRealtimeSync();
+  render();
+})();
+</script>
+</body>
+</html>
