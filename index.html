@@ -506,8 +506,16 @@ async function saveSet(matchId, setKey, h, a){
   scores[matchId] = scores[matchId] || {};
   scores[matchId][setKey] = {h,a};
   if(db){
-    try{ await setDoc(doc(db, SCORES_COLLECTION, matchId), scores[matchId]); }
-    catch(e){ console.error('save failed', e); }
+    try{
+      await setDoc(doc(db, SCORES_COLLECTION, matchId), scores[matchId]);
+      const note = document.getElementById('syncNote');
+      if(note) note.textContent = 'Guardado y sincronizado ✓';
+    }
+    catch(e){
+      console.error('save failed', e);
+      const note = document.getElementById('syncNote');
+      if(note) note.textContent = 'No se pudo guardar: '+(e.code||e.message||e)+' — revisa las reglas de Firestore.';
+    }
   } else {
     try{ localStorage.setItem('linaes2026:'+matchId, JSON.stringify(scores[matchId])); }catch(e){}
   }
